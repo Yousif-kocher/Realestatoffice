@@ -767,7 +767,7 @@
         data.append('note', note);
         
         // Send to server
-        fetch('https://realestatoffice-1.onrender.com/api/markers', {
+        fetch('/api/markers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -794,7 +794,7 @@
 
     // Load markers from server
     function loadMarkersFromServer() {
-        fetch('https://realestatoffice-1.onrender.com/api/markers', {
+        fetch('/api/markers', {
             credentials: 'include'
         })
         .then(response => response.json())
@@ -877,7 +877,7 @@
 
     // Delete marker
     function deleteMarker(markerId) {
-        fetch(`https://realestatoffice-1.onrender.com/api/markers/${markerId}`, {
+        fetch(`/api/markers/${markerId}`, {
             method: 'DELETE',
             credentials: 'include'
         })
@@ -974,4 +974,5 @@
 </script>
 </body>
 </html>
+
 
