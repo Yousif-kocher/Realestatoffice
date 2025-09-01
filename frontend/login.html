@@ -405,7 +405,7 @@
             messageDiv.style.display = 'block';
             
             try {
-                const response = await fetch('http://localhost:3000/login', {
+                const response = await fetch('http://https://realestatoffice.onrender.com/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -442,7 +442,7 @@
     // Check if user already has a valid session
     async function checkSession() {
         try {
-            const response = await fetch('http://localhost:3000/api/session', {
+            const response = await fetch('http://https://realestatoffice.onrender.com/api/session', {
                 credentials: 'include' // Important for sessions
             });
             const data = await response.json();
@@ -465,7 +465,7 @@
     async function checkServerStatus() {
         try {
             // Use a public endpoint to check server status
-            const response = await fetch('http://localhost:3000/');
+            const response = await fetch('http://https://realestatoffice.onrender.com/');
             document.getElementById('server-status').textContent = 'Online';
             document.getElementById('server-status').style.color = 'green';
         } catch (error) {
@@ -475,4 +475,5 @@
     }
 </script>
 </body>
+
 </html>
