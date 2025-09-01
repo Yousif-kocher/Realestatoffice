@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 4000;
 
 // Enable CORS (Cross-Origin Resource Sharing) so frontend can call backend
 app.use(cors({
-  
+  origin: ['https://realestatoffice.onrender.com', 'http://localhost:3000'],
   credentials: true
 }));
 
@@ -443,5 +443,6 @@ app.listen(PORT, () => {
   console.log(`Access the application at: http://localhost:${PORT}`);
   console.log(`Admin username: ${process.env.ADMIN_USERNAME || 'admin'}`);
 });
+
 
 
