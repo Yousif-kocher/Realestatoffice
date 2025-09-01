@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Management - Real Estate Office</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        .user-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info {
+            text-align: center;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-role {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .menu {
+            flex: 1;
+        }
+        
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .menu-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid #3498db;
+        }
+        
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logout {
+            padding: 15px 25px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+        
+        /* Main content styling */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 30px;
+            padding: 8px 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 300px;
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+        }
+        
+        .search-bar i {
+            color: #7f8c8d;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .user-table th,
+        .user-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .user-table tr:hover {
+            background: #f5f7fa;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #ffeaa7;
+            color: #d35400;
+        }
+        
+        .status-approved {
+            background: #d1f7c4;
+            color: #27ae60;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-approve {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #219653;
+        }
+        
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        
+        .no-users {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            color: #7f8c8d;
+        }
+        
+        .no-users i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .loading i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #3498db;
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-box {
+            background: #ffecec;
+            color: #e43030;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .error-box i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .retry-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 15px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 10px 0;
+            }
+            
+            .search-bar {
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>Real<span>Estate</span></h1>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-image">
+                    <img id="user-profile-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="User Profile">
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name">Admin User</div>
+                    <div class="user-role" id="user-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="menu">
+                <div class="menu-item">
+                    <a href="index.html" class="menu-link">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="menu-item active">
+                    <a href="clients.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Clients</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="map.html" class="menu-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>City Map</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="properties.html" class="menu-link">
+                        <i class="fas fa-building"></i>
+                        <span>Properties</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="logout menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 class="page-title">Client Management</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search users..." id="search-input">
+                </div>
+            </div>
+            
+            <!-- Error message container -->
+            <div id="error-message" class="error-box" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="error-text"></span>
+                <button class="retry-btn" onclick="loadUsers()">Retry</button>
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading" class="loading">
+                <i class="fas fa-spinner"></i>
+                <h3>Loading users...</h3>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="pending">Pending Approval</div>
+                <div class="tab" data-tab="approved">Approved Users</div>
+                <div class="tab" data-tab="all">All Users</div>
+            </div>
+            
+            <div class="tab-content active" id="pending-tab">
+                <h3>Users Pending Approval</h3>
+                <div class="user-list">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Profile</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-users">
+                            <!-- Pending users will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div id="no-pending" class="no-users" style="display: none;">
+                        <i class="fas fa-user-check"></i>
+                        <h3>No users pending approval</h3>
+                        <p>All users have been approved.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="approved-tab">
+                <h3>Approved Users</h3>
+                <div class="user-list">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Profile</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approved-users">
+                            <!-- Approved users will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div id="no-approved" class="no-users" style="display: none;">
+                        <i class="fas fa-user-plus"></i>
+                        <h3>No approved users</h3>
+                        <p>No users have been approved yet.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="all-tab">
+                <h3>All Users</h3>
+                <div class="user-list">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Profile</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-users">
+                            <!-- All users will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div id="no-users" class="no-users" style="display: none;">
+                        <i class="fas fa-users"></i>
+                        <h3>No users found</h3>
+                        <p>No users have registered yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Check if user is logged in
+    fetch('/api/session', {
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success || !data.user) {
+            // Redirect to login if not authenticated
+            window.location.href = 'login.html';
+        } else {
+            console.log('User authenticated:', data.user);
+            loadUserData(data.user);
+
+            // Tabs
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    loadUsers(tabId);
+                });
+            });
+
+            // Logout
+            document.querySelector('.logout').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    fetch('/logout', { method: 'POST', credentials: 'include' })
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.success) {
+                                localStorage.removeItem('user');
+                                window.location.href = 'login.html';
+                            }
+                        })
+                        .catch(() => {
+                            localStorage.removeItem('user');
+                            window.location.href = 'login.html';
+                        });
+                }
+            });
+
+            // Search
+            document.getElementById('search-input').addEventListener('input', function() {
+                filterUsers(this.value);
+            });
+
+            // Load first tab
+            loadUsers('pending');
+        }
+    })
+    .catch(() => window.location.href = 'login.html');
+
+    function loadUserData(userData) {
+        document.getElementById('user-name').textContent = userData.name || 'Admin User';
+        document.getElementById('user-role').textContent = userData.isAdmin ? 'Administrator' : 'Real Estate Agent';
+        if (userData.profile_image) {
+            document.getElementById('user-profile-img').src = userData.profile_image;
+        }
+    }
+
+    function loadUsers(filter = 'pending') {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('error-message').style.display = 'none';
+
+        fetch('/users', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                if (data.success) {
+                    displayUsers(data.users, filter);
+                } else {
+                    showError(data.message || 'Error loading users');
+                }
+            })
+            .catch(() => {
+                document.getElementById('loading').style.display = 'none';
+                showError('Failed to load users. Please check if the server is running.');
+            });
+    }
+
+    function showError(message) {
+        document.getElementById('error-text').textContent = message;
+        document.getElementById('error-message').style.display = 'flex';
+    }
+
+    function displayUsers(users, filter) {
+        const pendingTbody = document.getElementById('pending-users');
+        const approvedTbody = document.getElementById('approved-users');
+        const allTbody = document.getElementById('all-users');
+
+        pendingTbody.innerHTML = '';
+        approvedTbody.innerHTML = '';
+        allTbody.innerHTML = '';
+
+        document.getElementById('no-pending').style.display = 'none';
+        document.getElementById('no-approved').style.display = 'none';
+        document.getElementById('no-users').style.display = 'none';
+
+        let pendingCount = 0, approvedCount = 0;
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            const regDate = new Date(user.created_at).toLocaleDateString();
+            const profileImg = user.profile_image 
+                ? `<img src="${user.profile_image}" class="user-avatar" alt="${user.name}">`
+                : `<div class="user-avatar" style="background: #ddd; display: flex; align-items: center; justify-content: center;">
+                     <i class="fas fa-user" style="color: #777;"></i>
+                   </div>`;
+            const statusBadge = user.approved 
+                ? '<span class="status-badge status-approved">Approved</span>'
+                : '<span class="status-badge status-pending">Pending</span>';
+            let actions = '';
+            if (!user.approved) {
+                actions = `
+                    <button class="action-btn btn-approve" onclick="approveUser(${user.id})">Approve</button>
+                    <button class="action-btn btn-delete" onclick="deleteUser(${user.id})">Delete</button>
+                `;
+                pendingCount++;
+            } else {
+                actions = `<button class="action-btn btn-delete" onclick="deleteUser(${user.id})">Delete</button>`;
+                approvedCount++;
+            }
+
+            row.innerHTML = `
+                <td>${profileImg}</td>
+                <td>${user.name}</td>
+                <td>${user.username}</td>
+                <td>${user.phone || 'N/A'}</td>
+                <td>${regDate}</td>
+                <td>${statusBadge}</td>
+                <td>${actions}</td>
+            `;
+
+            // Append row to right table
+            if (user.approved) {
+                approvedTbody.appendChild(row.cloneNode(true));
+            } else {
+                pendingTbody.appendChild(row.cloneNode(true));
+            }
+            allTbody.appendChild(row);
+        });
+
+        if (pendingCount === 0) document.getElementById('no-pending').style.display = 'block';
+        if (approvedCount === 0) document.getElementById('no-approved').style.display = 'block';
+        if (users.length === 0) document.getElementById('no-users').style.display = 'block';
+    }
+
+    function filterUsers(searchTerm) {
+        const rows = document.querySelectorAll('.user-table tbody tr');
+        searchTerm = searchTerm.toLowerCase();
+        rows.forEach(row => {
+            const name = row.cells[1].textContent.toLowerCase();
+            const username = row.cells[2].textContent.toLowerCase();
+            const phone = row.cells[3].textContent.toLowerCase();
+            row.style.display = (name.includes(searchTerm) || username.includes(searchTerm) || phone.includes(searchTerm)) ? '' : 'none';
+        });
+    }
+
+    function approveUser(userId) {
+        if (confirm('Approve this user?')) {
+            fetch(`/users/${userId}/approve`, { method: 'POST', credentials: 'include' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        alert('User approved');
+                        loadUsers('pending');
+                    } else {
+                        alert('Error approving user: ' + d.message);
+                    }
+                });
+        }
+    }
+
+    function deleteUser(userId) {
+        if (confirm('Delete this user? This action cannot be undone.')) {
+            fetch(`/users/${userId}`, { method: 'DELETE', credentials: 'include' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.success) {
+                        alert('User deleted');
+                        loadUsers('pending');
+                    } else {
+                        alert('Error deleting user: ' + d.message);
+                    }
+                });
+        }
+    }
+</script>
+
+</body>
+</html>

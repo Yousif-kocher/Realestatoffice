@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Real Estate Office</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .app-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .app-tagline {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                flex-direction: row;
+            }
+        }
+        
+        .info-panel {
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .info-panel {
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
+        }
+        
+        .info-panel h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .benefit-list {
+            list-style-type: none;
+        }
+        
+        .benefit-list li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .benefit-list li::before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+            background: #e7f7ed;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .register-panel {
+            flex: 1;
+            padding: 25px;
+            background: white;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .register-panel h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-group .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .image-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #3498db;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .image-preview i {
+            font-size: 40px;
+            color: #7f8c8d;
+        }
+        
+        .upload-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .upload-btn:hover {
+            background: #2980b9;
+        }
+        
+        .upload-btn i {
+            margin-right: 8px;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        button[type="submit"]:hover {
+            background: #219653;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .login-link p {
+            margin-bottom: 10px;
+            color: #7f8c8d;
+        }
+        
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        
+        .login-link a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        .login-link i {
+            margin-right: 8px;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .message.error {
+            background-color: #ffecec;
+            color: #e43030;
+        }
+        
+        .message.success {
+            background-color: #e7f7ed;
+            color: #27ae60;
+        }
+        
+        .requirements {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="app-name">Real Estate Office Manager</div>
+            <div class="app-tagline">Create Your Account</div>
+        </header>
+        
+        <div class="content">
+            <div class="info-panel">
+                <h2>Why Join Us?</h2>
+                <ul class="benefit-list">
+                    <li>Access exclusive property listings</li>
+                    <li>Manage clients and properties efficiently</li>
+                    <li>Use interactive city maps for marking areas</li>
+                    <li>Get notified about new potential clients</li>
+                    <li>Track your real estate business performance</li>
+                    <li>24/7 customer support</li>
+                </ul>
+                
+                <div style="margin-top: 30px; padding: 15px; background: #e7f7ed; border-radius: 6px;">
+                    <h3 style="color: #27ae60; margin-bottom: 10px;">Note</h3>
+                    <p style="color: #2c3e50; font-size: 14px;">
+                        After registration, your account will need to be approved by an administrator before you can access the system.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="register-panel">
+                <h2>Create Your Account</h2>
+                <form id="registerForm">
+                    <div class="image-upload">
+                        <div class="image-preview" id="imagePreview">
+                            <i class="fas fa-user"></i>
+                            <img src="" alt="Profile Preview" id="preview">
+                        </div>
+                        <input type="file" id="file-input" accept="image/*">
+                        <label for="file-input" class="upload-btn">
+                            <i class="fas fa-upload"></i>Upload Photo
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                        <div class="error" id="name-error">Please enter your full name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required placeholder="Choose a username">
+                        <div class="error" id="username-error">Username must be at least 4 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+                        <div class="error" id="phone-error">Please enter a valid phone number</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                        <div class="password-strength">
+                            <div class="strength-meter" id="strength-meter"></div>
+                        </div>
+                        <div class="error" id="password-error">Password must be at least 8 characters with letters and numbers</div>
+                        <div class="requirements">Use at least 8 characters with a mix of letters and numbers</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password:</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirm your password">
+                        <div class="error" id="confirm-password-error">Passwords do not match</div>
+                    </div>
+                    
+                    <button type="submit">Create Account</button>
+                    
+                    <div class="login-link">
+                        <p>Already have an account?</p>
+                        <a href="login.html">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login to your account
+                        </a>
+                    </div>
+                </form>
+                <div id="message" class="message"></div>
+            </div>
+        </div>
+        
+        <footer>
+            &copy; 2023 Real Estate Office Manager | Built with Node.js, Express, and MySQL
+        </footer>
+    </div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('file-input');
+            const preview = document.getElementById('preview');
+            const imagePreview = document.getElementById('imagePreview');
+            const registerForm = document.getElementById('registerForm');
+            const messageDiv = document.getElementById('message');
+            const password = document.getElementById('password');
+            const strengthMeter = document.getElementById('strength-meter');
+            
+            // Image preview functionality
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.addEventListener('load', function() {
+                        preview.src = reader.result;
+                        preview.style.display = 'block';
+                        imagePreview.querySelector('i').style.display = 'none';
+                    });
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Password strength meter
+            password.addEventListener('input', function() {
+                const val = password.value;
+                const result = zxcvbn(val);
+                
+                // Update the strength meter
+                let strength = 0;
+                let color = '#e74c3c';
+                
+                if (val.length > 0) {
+                    switch(result.score) {
+                        case 0:
+                        case 1:
+                            strength = 25;
+                            color = '#e74c3c';
+                            break;
+                        case 2:
+                            strength = 50;
+                            color = '#f39c12';
+                            break;
+                        case 3:
+                            strength = 75;
+                            color = '#3498db';
+                            break;
+                        case 4:
+                            strength = 100;
+                            color = '#27ae60';
+                            break;
+                    }
+                }
+                
+                strengthMeter.style.width = strength + '%';
+                strengthMeter.style.background = color;
+            });
+            
+            // Form validation and submission
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Reset errors
+                document.querySelectorAll('.error').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                let isValid = true;
+                
+                // Validate name
+                const name = document.getElementById('name').value;
+                if (name.length < 2) {
+                    document.getElementById('name-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate username
+                const username = document.getElementById('username').value;
+                if (username.length < 4) {
+                    document.getElementById('username-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate phone
+                const phone = document.getElementById('phone').value;
+                if (phone.length < 10 || !/^[0-9+() -]+$/.test(phone)) {
+                    document.getElementById('phone-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate password
+                const passwordVal = password.value;
+                if (passwordVal.length < 8 || !/(?=.*[a-zA-Z])(?=.*[0-9])/.test(passwordVal)) {
+                    document.getElementById('password-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate confirm password
+                const confirmPassword = document.getElementById('confirm-password').value;
+                if (passwordVal !== confirmPassword) {
+                    document.getElementById('confirm-password-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    messageDiv.textContent = 'Please fix the errors in the form.';
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Create FormData object to handle file upload
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', passwordVal);
+                formData.append('name', name);
+                formData.append('phone', phone);
+                
+                // Append file if selected
+                if (fileInput.files[0]) {
+                    formData.append('profile_image', fileInput.files[0]);
+                }
+                
+                try {
+                    // Send registration request to server
+                    const response = await fetch('http://localhost:3000/register', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        messageDiv.textContent = data.message || 'Registration successful! Your account is pending admin approval.';
+                        messageDiv.className = 'message success';
+                        messageDiv.style.display = 'block';
+                        
+                        // Redirect to login page after successful registration
+                        setTimeout(() => {
+                            window.location.href = 'login.html?message=registration-success';
+                        }, 2000);
+                    } else {
+                        messageDiv.textContent = data.message || 'Registration failed. Please try again.';
+                        messageDiv.className = 'message error';
+                        messageDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    messageDiv.textContent = 'Registration failed. Please try again.';
+                    messageDiv.className = 'message error';
+                    messageDiv.style.display = 'block';
+                }
+            });
+            
+            // Simple zxcvbn implementation for password strength (simplified)
+            function zxcvbn(password) {
+                let score = 0;
+                if (password.length >= 8) score++;
+                if (password.length >= 10) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/[0-9]/.test(password)) score++;
+                if (/[^A-Za-z0-9]/.test(password)) score++;
+                
+                return {
+                    score: Math.min(4, Math.floor(score / 2))
+                };
+            }
+        });
+    </script>
+</body>
+</html>

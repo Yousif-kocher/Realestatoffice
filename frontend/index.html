@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Office Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        .user-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info {
+            text-align: center;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-role {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .menu {
+            flex: 1;
+        }
+        
+        .menu-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .menu-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid #3498db;
+        }
+        
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .logout {
+            padding: 15px 25px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+        
+        /* Main content styling */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 30px;
+            padding: 8px 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 300px;
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+        }
+        
+        .search-bar i {
+            color: #7f8c8d;
+        }
+        
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .card-change {
+            font-size: 14px;
+            color: #27ae60;
+        }
+        
+        .card-change.negative {
+            color: #e74c3c;
+        }
+        
+        .city-map-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .map-container {
+            height: 400px;
+            background: #eaeaea;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 10px 0;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>Real<span>Estate</span></h1>
+            </div>
+            
+            <div class="user-profile">
+                <div class="profile-image">
+                    <img id="user-profile-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="User Profile">
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="user-name">John Doe</div>
+                    <div class="user-role" id="user-role">Real Estate Agent</div>
+                </div>
+            </div>
+            
+            <div class="menu">
+                <div class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item">
+                    <a href="map.html" class="menu-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>City Map</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="clients.html" class="menu-link">
+                        <i class="fas fa-users"></i>
+                        <span>Clients</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a href="properties.html" class="menu-link">
+                        <i class="fas fa-building"></i>
+                        <span>Properties</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="logout menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2 class="page-title">Dashboard</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search properties, clients...">
+                </div>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Total Properties</div>
+                        <div class="card-icon" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="total-properties">0</div>
+                    <div class="card-change" id="properties-change">Loading...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Active Clients</div>
+                        <div class="card-icon" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="total-clients">0</div>
+                    <div class="card-change" id="clients-change">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="city-map-section">
+                <h3 class="section-title">City Map Overview</h3>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 15px;"></i>
+                        <p>Interactive City Map will be displayed here</p>
+                        <a href="map.html" style="color: #3498db; text-decoration: none; margin-top: 10px; display: inline-block;">
+                            <i class="fas fa-external-link-alt"></i> Open Map
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Simple script to handle menu interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Skip if clicking on a link
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
+                    return;
+                }
+
+                // Remove active class from all items
+                menuItems.forEach(i => i.classList.remove('active'));
+
+                // Add active class to clicked item
+                this.classList.add('active');
+
+                // If logout is clicked
+                if (this.querySelector('.fa-sign-out-alt')) {
+                    if (confirm('Are you sure you want to logout?')) {
+                        fetch('http://localhost:3000/logout', {
+                            method: 'POST',
+                            credentials: 'include' // Important: clears session cookie
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Clear localStorage
+                                localStorage.removeItem('user');
+                                // Redirect back to login page
+                                window.location.href = 'login.html';
+                            } else {
+                                alert('Logout failed: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Logout error:', error);
+                            alert('Logout failed. Please try again.');
+                        });
+                    }
+                }
+            });
+        });
+
+        // Load user data
+        loadUserData();
+
+        // Load dashboard stats
+        loadDashboardStats();
+    });
+
+    // Load user data from localStorage or server
+    function loadUserData() {
+        const userData = JSON.parse(localStorage.getItem('user')) || {};
+
+        document.getElementById('user-name').textContent = userData.name || 'John Doe';
+        document.getElementById('user-role').textContent = userData.isAdmin ? 'Administrator' : 'Real Estate Agent';
+
+        // Set profile image if available
+        if (userData.profile_image) {
+            document.getElementById('user-profile-img').src = userData.profile_image;
+        }
+    }
+
+    // Load dashboard statistics
+    function loadDashboardStats() {
+        // Fetch properties count (red markers)
+        fetch('/api/markers/count?color=red')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('total-properties').textContent = data.count;
+                    document.getElementById('properties-change').textContent = 'Based on red markers';
+                } else {
+                    document.getElementById('total-properties').textContent = '0';
+                    document.getElementById('properties-change').textContent = 'Error loading data';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading properties count:', error);
+                document.getElementById('total-properties').textContent = '0';
+                document.getElementById('properties-change').textContent = 'Error loading data';
+            });
+
+        // Fetch active users count
+        fetch('/api/users/count?approved=true')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('total-clients').textContent = data.count;
+                    document.getElementById('clients-change').textContent = 'Active users';
+                } else {
+                    document.getElementById('total-clients').textContent = '0';
+                    document.getElementById('clients-change').textContent = 'Error loading data';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading clients count:', error);
+                document.getElementById('total-clients').textContent = '0';
+                document.getElementById('clients-change').textContent = 'Error loading data';
+            });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Office - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .app-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .app-tagline {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                flex-direction: row;
+            }
+        }
+        
+        .info-panel {
+            flex: 1;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .info-panel {
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
+        }
+        
+        .info-panel h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li::before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+            background: #e7f7ed;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-panel {
+            flex: 1;
+            padding: 25px;
+            background: white;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .login-panel h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .register-link p {
+            margin-bottom: 10px;
+            color: #7f8c8d;
+        }
+        
+        .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        
+        .register-link a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        .register-link i {
+            margin-right: 8px;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .message.error {
+            background-color: #ffecec;
+            color: #e43030;
+        }
+        
+        .message.success {
+            background-color: #e7f7ed;
+            color: #27ae60;
+        }
+        
+        .message.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #6c757d;
+            display: none;
+        }
+        
+        .debug-toggle {
+            color: #3498db;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .url-box {
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .test-accounts {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f7ed;
+            border-radius: 6px;
+        }
+        
+        .test-accounts h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .test-account {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid #d4edda;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="app-name">Real Estate Office Manager</div>
+            <div class="app-tagline">Property Management Made Simple</div>
+        </header>
+        
+        <div class="content">
+            <div class="info-panel">
+                <h2>Application Features</h2>
+                <ul class="feature-list">
+                    <li>Interactive city map for marking areas</li>
+                    <li>Client information management</li>
+                    <li>Property listing and tracking</li>
+                    <li>Image upload and gallery</li>
+                    <li>Secure user authentication</li>
+                    <li>Responsive design for all devices</li>
+                </ul>
+                
+                <div class="test-accounts">
+                    <h4>Test Accounts</h4>
+                    <div class="test-account">
+                        <span>Admin:</span>
+                        <span>admin / admin123</span>
+                    </div>
+                    <div class="test-account">
+                        <span>User (needs approval):</span>
+                        <span>testuser / password123</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-panel">
+                <h2>Login to Your Account</h2>
+                
+                <!-- Display registration success message if redirected from registration -->
+                <div id="registration-message" class="message info" style="display: none;">
+                    Registration successful! Your account is pending admin approval.
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required placeholder="Enter your username" value="admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password" value="admin123">
+                    </div>
+                    <button type="submit">Login</button>
+                    
+                    <div class="register-link">
+                        <p>Don't have an account yet?</p>
+                        <a href="register.html">
+                            <i class="fas fa-user-plus"></i>
+                            Register for a new account
+                        </a>
+                    </div>
+                </form>
+                <div id="message" class="message"></div>
+                
+                <div class="debug-toggle" onclick="toggleDebug()">
+                    <i class="fas fa-bug"></i> Show Debug Info
+                </div>
+                
+                <div id="debug-info" class="debug-info">
+                    <h4>Debug Information</h4>
+                    <div id="debug-content">
+                        Server status: <span id="server-status">Checking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to Access Your Login Page</h3>
+            <p>Once you have set up your Node.js server, you can access your login page using one of these URLs:</p>
+            
+            <div class="url-box">http://localhost:3000/login.html</div>
+            
+            <p>If you've configured your server to serve the login page at the root path, use:</p>
+            
+            <div class="url-box">http://localhost:3000</div>
+            
+            <p>Make sure your server is running before trying to access these URLs.</p>
+        </div>
+        
+        <footer>
+            &copy; 2023 Real Estate Office Manager | Built with Node.js, Express, and MySQL
+        </footer>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is already logged in
+        checkSession();
+        
+        // Check if redirected from registration
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('message') === 'registration-success') {
+            document.getElementById('registration-message').style.display = 'block';
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            
+            // Show loading state
+            messageDiv.textContent = 'Logging in...';
+            messageDiv.className = 'message info';
+            messageDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password }),
+                    credentials: 'include' // Important for sessions
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.textContent = 'Login successful! Redirecting...';
+                    messageDiv.className = 'message success';
+                    
+                    // Store user data in localStorage
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    messageDiv.textContent = data.message;
+                    messageDiv.className = 'message error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Login failed. Please check if the server is running.';
+                messageDiv.className = 'message error';
+                console.error('Login error:', error);
+            }
+        });
+    });
+    
+    // Check if user already has a valid session
+    async function checkSession() {
+        try {
+            const response = await fetch('http://localhost:3000/api/session', {
+                credentials: 'include' // Important for sessions
+            });
+            const data = await response.json();
+            
+            if (data.success && data.user) {
+                // User is already logged in, redirect to dashboard
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            console.log('No active session or server not responding');
+            // Continue with login page
+        }
+    }
+    
+    function toggleDebug() {
+        const debugInfo = document.getElementById('debug-info');
+        debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    async function checkServerStatus() {
+        try {
+            // Use a public endpoint to check server status
+            const response = await fetch('http://localhost:3000/');
+            document.getElementById('server-status').textContent = 'Online';
+            document.getElementById('server-status').style.color = 'green';
+        } catch (error) {
+            document.getElementById('server-status').textContent = 'Offline - ' + error.message;
+            document.getElementById('server-status').style.color = 'red';
+        }
+    }
+</script>
+</body>
+</html>

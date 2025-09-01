@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام خرائط مكتب كوجر للعقارات</title>
+    <script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing CSS remains unchanged */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .back-button {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .back-button i {
+            margin-left: 8px;
+        }
+        
+        header h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+        
+        .sidebar {
+            width: 320px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .color-selection {
+            margin-bottom: 30px;
+        }
+        
+        .color-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .color-option:hover {
+            background: #f8f9fa;
+            transform: translateX(-5px);
+        }
+        
+        .color-option input {
+            margin-left: 10px;
+        }
+        
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-left: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .color-red { background-color: #e74c3c; }
+        .color-blue { background-color: #3498db; }
+        .color-green { background-color: #2ecc71; }
+        .color-black { background-color: #2c3e50; }
+        .color-orange { background-color: #f39c12; }
+        .color-pink { background-color: #e84393; }
+        
+        .color-legend {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .legend-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: white;
+        }
+        
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-left: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .legend-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        #viewer {
+            width: 100%;
+            height: 100%;
+            background: #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .markers-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .marker {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50% 50% 50% 0;
+            cursor: pointer;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+            border: 2px solid white;
+            pointer-events: auto;
+            z-index: 10;
+        }
+        
+        .marker-content {
+            transform: rotate(45deg);
+        }
+        
+        .marker:hover {
+            transform: translate(-50%, -50%) rotate(-45deg) scale(1.2);
+            z-index: 20;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            min-width: 100px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn i {
+            margin-left: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .modal-title {
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .marker-details {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 20;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+        
+        .marker-details h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .marker-details p {
+            margin-bottom: 15px;
+            color: #7f8c8d;
+        }
+        
+        .marker-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 300px;
+            }
+            
+            #viewer {
+                height: 400px;
+            }
+            
+            .controls {
+                position: relative;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-radius: 0;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-controls">
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> العودة
+            </a>
+        </div>
+        <h1>مكــتب كوجـــر للعــقارات - نظام الخرائط</h1>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h2 class="sidebar-title">أنواع العقارات</h2>
+            <div class="color-selection">
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="red" checked>
+                    <span class="color-dot color-red"></span>
+                    <span>قطعه عه ردي بو فروتنة</span>
+                </label>
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="blue">
+                    <span class="color-dot color-blue"></span>
+                    <span>قطعة عه ردي هاتية فروتن</span>
+                </label>
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="green">
+                    <span class="color-dot color-green"></span>
+                    <span>قطــعة ســند</span>
+                </label>
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="black">
+                    <span class="color-dot color-black"></span>
+                    <span>ملاحظــات</span>
+                </label>
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="orange">
+                    <span class="color-dot color-orange"></span>
+                    <span>نيف قطــة</span>
+                </label>
+                <label class="color-option">
+                    <input type="radio" name="markerColor" value="pink">
+                    <span class="color-dot color-pink"></span>
+                    <span>قطــعة عــدم</span>
+                </label>
+            </div>
+
+            <div class="color-legend">
+                <h3 class="legend-title">إحصائيات</h3>
+                <div class="legend-item">
+                    <span class="legend-color color-red"></span>
+                    <span class="legend-label" id="red-count">0 قطع</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color color-blue"></span>
+                    <span class="legend-label" id="blue-count">0 قطع</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color color-green"></span>
+                    <span class="legend-label" id="green-count">0 قطع</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color color-black"></span>
+                    <span class="legend-label" id="black-count">0 ملاحظة</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color color-orange"></span>
+                    <span class="legend-label" id="orange-count">0 قطع</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color color-pink"></span>
+                    <span class="legend-label" id="pink-count">0 قطع</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="viewer-container">
+            <div id="viewer"></div>
+            <div class="markers-container" id="markers-container"></div>
+            
+            <div class="controls">
+                <div class="stats">
+                    <div class="stat-box">
+                        <span class="stat-value" id="total-markers">0</span>
+                        <span class="stat-label">عدد العلامات</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value" id="visible-markers">0</span>
+                        <span class="stat-label">العلامات الظاهرة</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="toggle-markers">
+                        <i class="fas fa-eye-slash"></i> إخفاء العلامات
+                    </button>
+                    <button class="btn btn-primary" id="toggle-add-markers">
+                        <i class="fas fa-map-marker-alt"></i> تمكين الإضافة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marker Modal -->
+    <div class="modal" id="marker-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">إضافة ملاحظة</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="marker-note">النص:</label>
+                <textarea id="marker-note" placeholder="أدخل تفاصيل العقار أو الملاحظات هنا..."></textarea>
+            </div>
+            <button class="btn btn-primary" id="save-note">
+                <i class="fas fa-check"></i> حفظ
+            </button>
+        </div>
+    </div>
+
+    <!-- Marker Details Modal -->
+    <div class="modal" id="marker-details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">تفاصيل العلامة</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>النوع:</label>
+                <p id="detail-type">قطعه عه ردي بو فروتنة</p>
+            </div>
+            <div class="form-group">
+                <label>الملاحظات:</label>
+                <p id="detail-note">لا توجد ملاحظات</p>
+            </div>
+            <div class="form-group">
+                <label>تاريخ الإضافة:</label>
+                <p id="detail-date">-</p>
+            </div>
+            <div class="marker-actions">
+                <button class="btn btn-danger" id="delete-marker">
+                    <i class="fas fa-trash"></i> حذف
+                </button>
+                <button class="btn btn-secondary" id="close-details">
+                    <i class="fas fa-times"></i> إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    // Global variables
+    let viewer;
+    let markers = [];
+    let addingMarkersEnabled = false;
+    let markersVisible = true;
+    let currentMarker = null;
+    let currentColor = 'red';
+
+    // Check if user is logged in
+    function checkAuth() {
+        fetch('/api/session', {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success || !data.user) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+            } else {
+                // User is authenticated, continue loading the page
+                console.log('User authenticated:', data.user);
+                
+                // Initialize the map
+                initializeViewer();
+                loadMarkersFromServer();
+                setupEventListeners();
+                
+                // Set up color selection
+                document.querySelectorAll('input[name="markerColor"]').forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        currentColor = this.value;
+                    });
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Session check failed:', error);
+            window.location.href = 'login.html';
+        });
+    }
+
+    // Initialize OpenSeadragon viewer
+    function initializeViewer() {
+        viewer = OpenSeadragon({
+            id: "viewer",
+            prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+            tileSources: {
+                type: 'image',
+                url: 'images/city_map.jpg'
+            },
+            showNavigationControl: true,
+            animationTime: 0.5,
+            blendTime: 0.1,
+            constrainDuringPan: true,
+            maxZoomPixelRatio: 2,
+            visibilityRatio: 1,
+            zoomPerScroll: 2
+        });
+
+        // Add click event to the viewer for placing markers
+        viewer.addHandler('canvas-click', function(event) {
+            if (!addingMarkersEnabled) return;
+            
+            const webPoint = event.position;
+            const viewportPoint = viewer.viewport.pointFromPixel(webPoint);
+            
+            // Show modal for adding note
+            showMarkerModal(viewportPoint.x, viewportPoint.y);
+        });
+
+        // Update marker positions when view changes (zoom/pan)
+        viewer.addHandler('animation', function() {
+            updateMarkerPositions();
+        });
+
+        viewer.addHandler('pan', function() {
+            updateMarkerPositions();
+        });
+
+        viewer.addHandler('zoom', function() {
+            updateMarkerPositions();
+        });
+        
+        // Add container for markers
+        const markersContainer = document.createElement('div');
+        markersContainer.id = 'markers-container';
+        markersContainer.className = 'markers-container';
+        document.getElementById('viewer').appendChild(markersContainer);
+    }
+
+    // Update all marker positions based on current viewport
+    function updateMarkerPositions() {
+        markers.forEach(marker => {
+            const markerElement = document.querySelector(`.marker[data-id="${marker.id}"]`);
+            if (markerElement) {
+                const viewportPoint = new OpenSeadragon.Point(marker.x_coordinate, marker.y_coordinate);
+                const webPoint = viewer.viewport.pixelFromPoint(viewportPoint);
+                
+                markerElement.style.left = webPoint.x + 'px';
+                markerElement.style.top = webPoint.y + 'px';
+            }
+        });
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+        // Toggle adding markers
+        const toggleAddButton = document.getElementById('toggle-add-markers');
+        toggleAddButton.addEventListener('click', function() {
+            addingMarkersEnabled = !addingMarkersEnabled;
+            this.innerHTML = addingMarkersEnabled ? 
+                '<i class="fas fa-times"></i> تعطيل الإضافة' : 
+                '<i class="fas fa-map-marker-alt"></i> تمكين الإضافة';
+                
+            if (addingMarkersEnabled) {
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-danger');
+            } else {
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-primary');
+            }
+        });
+
+        // Toggle markers visibility
+        const toggleVisibilityButton = document.getElementById('toggle-markers');
+        toggleVisibilityButton.addEventListener('click', function() {
+            markersVisible = !markersVisible;
+            toggleMarkersVisibility(markersVisible);
+            this.innerHTML = markersVisible ? 
+                '<i class="fas fa-eye-slash"></i> إخفاء العلامات' : 
+                '<i class="fas fa-eye"></i> إظهار العلامات';
+        });
+
+        // Save marker note
+        document.getElementById('save-note').addEventListener('click', saveMarker);
+
+        // Close modals
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+
+        // Close details modal
+        document.getElementById('close-details').addEventListener('click', function() {
+            document.getElementById('marker-details-modal').style.display = 'none';
+        });
+
+        // Delete marker
+        document.getElementById('delete-marker').addEventListener('click', function() {
+            if (currentMarker && confirm('هل أنت متأكد من أنك تريد حذف هذه العلامة؟')) {
+                deleteMarker(currentMarker.id);
+            }
+        });
+    }
+
+    // Show marker modal
+    function showMarkerModal(x, y) {
+        currentMarker = { x, y, color: currentColor };
+        document.getElementById('marker-modal').style.display = 'flex';
+        document.getElementById('marker-note').value = '';
+        document.getElementById('marker-note').focus();
+    }
+
+    // Save marker to server
+    function saveMarker() {
+        const note = document.getElementById('marker-note').value;
+        
+        if (!currentMarker) return;
+        
+        // Create URL-encoded data
+        const data = new URLSearchParams();
+        data.append('x', currentMarker.x);
+        data.append('y', currentMarker.y);
+        data.append('color', currentMarker.color);
+        data.append('note', note);
+        
+        // Send to server
+        fetch('/api/markers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            credentials: 'include',
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add marker to map
+                addMarkerToMap(data.marker);
+                document.getElementById('marker-modal').style.display = 'none';
+                updateStats();
+            } else {
+                alert('Error saving marker: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving marker. Please try again.');
+        });
+    }
+
+    // Load markers from server
+    function loadMarkersFromServer() {
+        fetch('/api/markers', {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                markers = data.markers;
+                renderMarkers();
+                updateStats();
+            } else {
+                console.error('Error loading markers:', data.message);
+                alert('Error loading markers: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading markers:', error);
+            alert('Error loading markers. Please try again.');
+        });
+    }
+
+    // Add marker to map
+    function addMarkerToMap(markerData) {
+        markers.push(markerData);
+        renderMarker(markerData);
+    }
+
+    // Render all markers
+    function renderMarkers() {
+        // Clear existing markers
+        const markersContainer = document.getElementById('markers-container');
+        markersContainer.innerHTML = '';
+        
+        // Render each marker
+        markers.forEach(marker => {
+            renderMarker(marker);
+        });
+    }
+
+    // Render a single marker
+    function renderMarker(marker) {
+        const viewportPoint = new OpenSeadragon.Point(marker.x_coordinate, marker.y_coordinate);
+        const webPoint = viewer.viewport.pixelFromPoint(viewportPoint);
+        
+        const markerElement = document.createElement('div');
+        markerElement.className = 'marker';
+        markerElement.style.backgroundColor = getColorCode(marker.color);
+        markerElement.style.left = webPoint.x + 'px';
+        markerElement.style.top = webPoint.y + 'px';
+        markerElement.dataset.id = marker.id;
+        
+        // Add number indicator based on creation order for this color
+        const sameColorMarkers = markers.filter(m => m.color === marker.color);
+        const creationOrder = sameColorMarkers.sort((a, b) => a.id - b.id).findIndex(m => m.id === marker.id) + 1;
+        
+        const markerContent = document.createElement('div');
+        markerContent.className = 'marker-content';
+        markerContent.innerHTML = creationOrder;
+        markerElement.appendChild(markerContent);
+        
+        // Add click event to show details
+        markerElement.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showMarkerDetails(marker);
+        });
+        
+        document.getElementById('markers-container').appendChild(markerElement);
+    }
+
+    // Show marker details
+    function showMarkerDetails(marker) {
+        currentMarker = marker;
+        
+        // Set details
+        document.getElementById('detail-type').textContent = getTypeName(marker.color);
+        document.getElementById('detail-note').textContent = marker.note || 'لا توجد ملاحظات';
+        document.getElementById('detail-date').textContent = new Date(marker.created_at).toLocaleString('eng');
+        
+        // Show modal
+        document.getElementById('marker-details-modal').style.display = 'flex';
+    }
+
+    // Delete marker
+    function deleteMarker(markerId) {
+        fetch(`/api/markers/${markerId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove from local array
+                markers = markers.filter(m => m.id !== markerId);
+                
+                // Remove from map
+                document.querySelector(`.marker[data-id="${markerId}"]`)?.remove();
+                
+                // Update stats
+                updateStats();
+                
+                // Close modal
+                document.getElementById('marker-details-modal').style.display = 'none';
+                
+                // Re-render markers to update numbers
+                renderMarkers();
+            } else {
+                alert('Error deleting marker: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting marker. Please try again.');
+        });
+    }
+
+    // Toggle markers visibility
+    function toggleMarkersVisibility(visible) {
+        const markersContainer = document.getElementById('markers-container');
+        markersContainer.style.display = visible ? 'block' : 'none';
+        
+        // Update visible markers count
+        document.getElementById('visible-markers').textContent = visible ? markers.length : 0;
+    }
+
+    // Update statistics
+    function updateStats() {
+        // Update total markers
+        document.getElementById('total-markers').textContent = markers.length;
+        
+        // Update visible markers
+        document.getElementById('visible-markers').textContent = markersVisible ? markers.length : 0;
+        
+        // Update counts by color
+        const colorCounts = {
+            red: markers.filter(m => m.color === 'red').length,
+            blue: markers.filter(m => m.color === 'blue').length,
+            green: markers.filter(m => m.color === 'green').length,
+            black: markers.filter(m => m.color === 'black').length,
+            orange: markers.filter(m => m.color === 'orange').length,
+            pink: markers.filter(m => m.color === 'pink').length
+        };
+        
+        document.getElementById('red-count').textContent = colorCounts.red + ' قطع';
+        document.getElementById('blue-count').textContent = colorCounts.blue + ' قطع';
+        document.getElementById('green-count').textContent = colorCounts.green + ' قطع';
+        document.getElementById('black-count').textContent = colorCounts.black + ' ملاحظة';
+        document.getElementById('orange-count').textContent = colorCounts.orange + ' قطع';
+        document.getElementById('pink-count').textContent = colorCounts.pink + ' قطع';
+    }
+
+    // Helper function to get color code
+    function getColorCode(color) {
+        const colors = {
+            red: '#e74c3c',
+            blue: '#3498db',
+            green: '#2ecc71',
+            black: '#2c3e50',
+            orange: '#f39c12',
+            pink: '#e84393'
+        };
+        return colors[color] || '#e74c3c';
+    }
+
+    // Helper function to get type name
+    function getTypeName(color) {
+        const names = {
+            red: 'قطعه عه ردي بو فروتنة',
+            blue: 'قطعة عه ردي هاتية فروتن',
+            green: 'قطــعة ســند',
+            black: 'ملاحظــات',
+            orange: 'نيف قطــة',
+            pink: 'قطــعة عــدم'
+        };
+        return names[color] || 'غير معروف';
+    }
+
+    // Initialize the application
+    checkAuth();
+</script>
+</body>
+</html>
