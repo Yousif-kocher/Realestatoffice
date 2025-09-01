@@ -17,7 +17,7 @@ require('dotenv').config();
 // Initialize Express
 // =========================
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // =========================
 // Middleware
@@ -443,4 +443,5 @@ app.listen(PORT, () => {
   console.log(`Access the application at: http://localhost:${PORT}`);
   console.log(`Admin username: ${process.env.ADMIN_USERNAME || 'admin'}`);
 });
+
 
